@@ -113,11 +113,40 @@
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-    </style>
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 </head>
 <body class="bg-[#f8fafc] text-slate-900 min-h-screen">
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p class="text-lg font-bold tracking-tight">Menyiapkan Lembar Kerja...</p>
+        <p class="text-xs text-slate-400 mt-2 uppercase tracking-widest font-black">Mohon Tunggu</p>
+    </div>
 
     <nav class="sticky top-0 z-[100] glass-card px-6 py-4 flex items-center justify-between border-b border-slate-200/50">
         <div class="flex items-center gap-3 text-left">
@@ -508,14 +537,29 @@
         btnStart.onclick = async () => {
             const idx = studentSelect.value;
             currentStudent = students[idx];
+            
+            // Show Loading
+            const overlay = document.getElementById('loading-overlay');
+            overlay.style.display = 'flex';
+            
             document.getElementById('display-name').textContent = currentStudent.name;
             document.getElementById('display-class').textContent = `KELAS ${currentStudent.class}`;
             
-            await loadData();
-            document.getElementById('step-login').classList.add('hidden');
-            document.getElementById('step-dashboard').classList.remove('hidden');
-            updateBadges();
-            lucide.createIcons();
+            try {
+                await loadData();
+                // Small delay for smooth transition
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    document.getElementById('step-login').classList.add('hidden');
+                    document.getElementById('step-dashboard').classList.remove('hidden');
+                    updateBadges();
+                    lucide.createIcons();
+                }, 800);
+            } catch (e) {
+                console.error(e);
+                overlay.style.display = 'none';
+                alert("Gagal memuat data. Periksa koneksi internetmu.");
+            }
         };
 
         async function loadData() {
