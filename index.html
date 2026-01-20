@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kejar Sains 2026 - Museum BI</title>
+    
+    <!-- Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Choices.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        museum: {
+                            dark: '#0f172a',
+                            gold: '#fbbf24',
+                            accent: '#4f46e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .subject-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .subject-card:active {
+            transform: scale(0.97);
+        }
+
+        /* Choices.js Customization */
+        .choices__inner {
+            background-color: white !important;
+            border-radius: 12px !important;
+            border: 2px solid #e2e8f0 !important;
+            min-height: 56px !important;
+            padding: 8px 16px !important;
+            font-weight: 600 !important;
+        }
+        .choices__list--dropdown {
+            border-radius: 12px !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* Entrance Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-900 min-h-screen">
+
+    <nav class="sticky top-0 z-50 glass-card px-6 py-4 flex items-center justify-between border-b border-slate-200/50">
+        <div class="flex items-center gap-3 text-left">
+            <img src="logo.png" alt="Logo" class="h-8 w-auto rounded-lg">
+            <div>
+                <h1 class="text-sm font-black tracking-tighter text-museum-dark leading-none uppercase">Kejar Sains</h1>
+                <span class="text-[10px] font-bold text-museum-accent uppercase tracking-widest">Museum BI 2026</span>
+            </div>
+        </div>
+        <div id="save-indicator" class="flex items-center gap-2 opacity-0 transition-opacity duration-300">
+            <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+            <span class="text-[10px] font-extrabold text-amber-600 uppercase tracking-tighter">Auto-Saving</span>
+        </div>
+    </nav>
+
+    <div id="app" class="max-w-md mx-auto px-6 py-8">
+        
+        <!-- Step 1: Selection -->
+        <section id="step-login" class="space-y-8">
+            <div class="flex justify-center mb-4">
+                <img src="logo.png" alt="Logo SMP PGII 1 Bandung" class="h-24 w-auto drop-shadow-xl rounded-2xl">
+            </div>
+            <div class="space-y-2 text-center">
+                <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">Selamat Datang, <br><span class="text-museum-accent underline decoration-amber-400">Penjelajah!</span></h2>
+                <p class="text-slate-500 font-medium text-sm">Pilih namamu dari daftar untuk memulai petualangan di Museum Bank Indonesia.</p>
+            </div>
+
+            <div class="space-y-4">
+                <select id="student-select" class="w-full">
+                    <option value="">Cari nama lengkap...</option>
+                </select>
+                <button id="btn-start" class="w-full h-14 bg-museum-dark text-white rounded-2xl font-bold shadow-2xl shadow-slate-300 transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2" disabled>
+                    Mulai Eksplorasi
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="pt-12 text-center">
+                <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">SMP PGII 1 Bandung</p>
+            </div>
+        </section>
+
+        <!-- Step 2: Dashboard -->
+        <section id="step-dashboard" class="hidden animate-slide-up">
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 mb-10 flex items-center justify-between text-left">
+                <div>
+                    <p id="display-name" class="text-xl font-extrabold text-slate-900 leading-tight"></p>
+                    <p id="display-class" class="text-xs font-bold text-museum-accent"></p>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 px-2">Subjek Eksplorasi</h3>
+            
+            <div class="grid grid-cols-1 gap-4">
+                <button onclick="openSubject('ipa')" class="subject-card group bg-white p-6 rounded-3xl border-2 border-slate-50 shadow-sm flex items-center justify-between hover:border-emerald-200">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="microscope" class="w-7 h-7"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-extrabold text-slate-800 tracking-tight uppercase">IPA</p>
+                            <p id="status-ipa" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Belum dikerjakan</p>
+                        </div>
+                    </div>
+                    <div id="badge-ipa" class="hidden w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-200">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                    </div>
+                </button>
+
+                <button onclick="openSubject('ips')" class="subject-card group bg-white p-6 rounded-3xl border-2 border-slate-50 shadow-sm flex items-center justify-between hover:border-orange-200">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="globe" class="w-7 h-7"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-extrabold text-slate-800 tracking-tight uppercase">IPS</p>
+                            <p id="status-ips" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Belum dikerjakan</p>
+                        </div>
+                    </div>
+                    <div id="badge-ips" class="hidden w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-200">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                    </div>
+                </button>
+
+                <button onclick="openSubject('pai')" class="subject-card group bg-white p-6 rounded-3xl border-2 border-slate-50 shadow-sm flex items-center justify-between hover:border-rose-200">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="book-open" class="w-7 h-7"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-extrabold text-slate-800 tracking-tight uppercase">PAI</p>
+                            <p id="status-pai" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Belum dikerjakan</p>
+                        </div>
+                    </div>
+                    <div id="badge-pai" class="hidden w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-200">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 3: Form -->
+        <section id="step-form" class="hidden animate-slide-up">
+            <button onclick="backToDashboard()" class="mb-8 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-museum-accent transition-colors group">
+                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                Kembali ke Dashboard
+            </button>
+
+            <h2 id="subject-title" class="text-4xl font-black tracking-tighter text-slate-900 mb-8 uppercase italic">IPS</h2>
+            
+            <div id="questions-container" class="space-y-10 pb-10"></div>
+
+            <!-- Submit Button Section -->
+            <div class="pb-32">
+                <button onclick="backToDashboard()" class="w-full h-16 bg-museum-dark text-white rounded-2xl font-bold shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3">
+                    <i data-lucide="check-circle" class="w-6 h-6 text-emerald-400"></i>
+                    Simpan & Selesai Mapel Ini
+                </button>
+                <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Jawabanmu sudah tersimpan otomatis di database</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Firebase SDK & Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- FIREBASE CONFIG ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyDwoyWbhXiFq-Gk9xJAZf6vy-ncwmG9_4A",
+          authDomain: "personalweb-56179.firebaseapp.com",
+          projectId: "personalweb-56179",
+          storageBucket: "personalweb-56179.firebasestorage.app",
+          messagingSenderId: "352925445634",
+          appId: "1:352925445634:web:927729519d00ce7201c11b",
+          measurementId: "G-FKM76BF9V3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        enableIndexedDbPersistence(db).catch(err => console.error(err.code));
+
+        // --- STUDENT DATA ---
+        const students = [
+            { name: "Ainiya Syaqeela Azmilhakim", class: "7A" }, { name: "Alifah Putri Khumaira", class: "7A" },
+            { name: "Alma Almira Yukinara", class: "7A" }, { name: "Andiratra Wafie Muhammad Trulasha", class: "7A" },
+            { name: "Anida Damia Fauziyah", class: "7A" }, { name: "Annisa Salsabila Pranata", class: "7A" },
+            { name: "Athar Farras Rabbani", class: "7A" }, { name: "Azalea Faeyza Shafwan", class: "7A" },
+            { name: "Darren Dhiyaa Jagaddhita", class: "7A" }, { name: "Fillar Shaqeel Romadhona", class: "7A" },
+            { name: "Ghaisan Ahyan Rasyid", class: "7A" }, { name: "Ghazwan Fauzan El-Faatih", class: "7A" },
+            { name: "Hafuza Nizam Pradipta", class: "7A" }, { name: "Indrasta Gantari Ramdan", class: "7A" },
+            { name: "Janitra Narajati", class: "7A" }, { name: "Kanaka Athaya Zakri Pranadipa", class: "7A" },
+            { name: "Kanisya Denael Monique", class: "7A" }, { name: "Khaelifa Aqeela Maritza", class: "7A" },
+            { name: "Khumayra Ahya Nushwa", class: "7A" }, { name: "Mochamad Al Ghifary Fadilah", class: "7A" },
+            { name: "Nabila Indriyani Sutisna", class: "7A" }, { name: "Nadira Mischa Qanita", class: "7A" },
+            { name: "Naufal Raziq Daffa Permana", class: "7A" }, { name: "Qahtan Sembada Rahmatulloh", class: "7A" },
+            { name: "Raisha Putri Malika", class: "7A" }, { name: "Shakilla Sahfiagata Haidy", class: "7A" },
+            { name: "Shazia Anaputri Rayma", class: "7A" }, { name: "Syahira Azzalea Rahman", class: "7A" },
+            { name: "Tanaya Artha Widhisaka", class: "7A" }, { name: "Thoriq Maulana Adzra", class: "7A" },
+            { name: "Varen Mahardika Arindewani", class: "7A" }, { name: "Adelia Putri Maharani", class: "7B" },
+            { name: "Adi Bagas Ditya", class: "7B" }, { name: "Affan Akmahamas Ramdhani", class: "7B" },
+            { name: "Afifah Nadzifa Nurmaulani Heryana", class: "7B" }, { name: "Aliya Putri Fawziyyah", class: "7B" },
+            { name: "Alunacalaisya Nazhifa Kautsar", class: "7B" }, { name: "Athalla Dafaqeel Kenino", class: "7B" },
+            { name: "Avanindra Prabaswara Wibisono", class: "7B" }, { name: "Azka Dhika Ramadhan", class: "7B" },
+            { name: "Dafiazka Ghaisan Swastika", class: "7B" }, { name: "El Fathan Jemmy Kurniawan", class: "7B" },
+            { name: "Humaira Shopia Mahar Raddyan", class: "7B" }, { name: "Keenar Athaya Azzalea", class: "7B" },
+            { name: "Khanisa Bulan Olivia", class: "7B" }, { name: "Khanza Isvara Wahidin", class: "7B" },
+            { name: "Legolas Flash Vectron Putra", class: "7B" }, { name: "Mafaza Fida Azkiyannisa", class: "7B" },
+            { name: "Marsya Azzahra Khairunnisa", class: "7B" }, { name: "Muhammad Fazan Raufa", class: "7B" },
+            { name: "Muhammad Khalid Alif Fauzi", class: "7B" }, { name: "Naufal Ghani Alfath", class: "7B" },
+            { name: "Nayara Sachi Kirana", class: "7B" }, { name: "Seana Handaru Kara", class: "7B" },
+            { name: "Setiawati Nur Saelkiya", class: "7B" }, { name: "Tsania Syamsa Zahira", class: "7B" },
+            { name: "Tungga Pradipta Natria", class: "7B" }, { name: "Yazid Rizki Ramadhan", class: "7B" },
+            { name: "Zahra Assyifa", class: "7B" }, { name: "Zalfa Shafiyyah Qaireen", class: "7B" },
+            { name: "Zhian Arshad Attarayhan", class: "7B" }, { name: "Ailey Astalona Zahidah", class: "7C" },
+            { name: "Alodia Zuhura Andrea Hussein", class: "7C" }, { name: "Anindya Rafanda Dirgantara", class: "7C" },
+            { name: "Annisa Kamila Ramadani", class: "7C" }, { name: "Ayesha Maiza Ahna", class: "7C" },
+            { name: "Daffa Athaya Alfarizqi", class: "7C" }, { name: "Dhaval Damian Raka Nugraha", class: "7C" },
+            { name: "Earthazer Syafaatia Apriyagung Putri", class: "7C" }, { name: "Eldrian Pradipta Susanto", class: "7C" },
+            { name: "Fauzia Aulia Rafifa", class: "7C" }, { name: "Fazri Pradita Rahadian", class: "7C" },
+            { name: "Gibran Sultan Al Ahya", class: "7C" }, { name: "Kalinda Harumi Ambarwati", class: "7C" },
+            { name: "Kaureen Fazila Aerithia", class: "7C" }, { name: "Kayla Admira", class: "7C" },
+            { name: "Keira Rannisa Wijaya", class: "7C" }, { name: "Kireina Syifa Kamilia", class: "7C" },
+            { name: "Mahija Arsakha", class: "7C" }, { name: "Marwah Ivana Sopian", class: "7C" },
+            { name: "Moura Farah Daiba", class: "7C" }, { name: "Muhammad Althaf Fadlurrahman", class: "7C" },
+            { name: "Muhammad Rasyid Ridha", class: "7C" }, { name: "Namora Junior Hadi", class: "7C" },
+            { name: "Naufal Raffa Abiyyu", class: "7C" }, { name: "Radya Arkananta Kamil", class: "7C" },
+            { name: "Rafa Putra Rianta", class: "7C" }, { name: "Reffan Alura Ganendra", class: "7C" },
+            { name: "Rivazmi Aufa Putri Oktoberlin", class: "7C" }, { name: "Sean Adetama", class: "7C" },
+            { name: "Thalita Shabirah", class: "7C" }, { name: "Aphrodite Aisyah Aryo", class: "7D" },
+            { name: "Ashadewi Aulia Aqilah", class: "7D" }, { name: "Ayra Amanda", class: "7D" },
+            { name: "Aysha Alula Ayunindya", class: "7D" }, { name: "Davina Kirana Elfrida", class: "7D" },
+            { name: "Fakhira Arkarna Raudhatunnisa Wibowo", class: "7D" }, { name: "Fakhira Shakilla Putri Rahardi", class: "7D" },
+            { name: "Farzan Ihza Argani", class: "7D" }, { name: "Gabriel Chanesa Niti Putri", class: "7D" },
+            { name: "Gusti Yoss Pradipta", class: "7D" }, { name: "Jihan Makailah Fakhirah", class: "7D" },
+            { name: "Kamea Atmadjaya Adi", class: "7D" }, { name: "Kayla Safa Nur Rizki", class: "7D" },
+            { name: "Kelvin Ahmad Samudra", class: "7D" }, { name: "Kemal Aisar Pradipta", class: "7D" },
+            { name: "Khairana Kiva Alianov", class: "7D" }, { name: "Khanza Latisha Darma", class: "7D" },
+            { name: "Muhammad Fathan Al Khafi", class: "7D" }, { name: "Muhammad Nur Ramadhan Taufiq", class: "7D" },
+            { name: "Muhammad Raziq Alzam", class: "7D" }, { name: "Nadhira Shakeela Firlia", class: "7D" },
+            { name: "Nadiva Nayla Putri", class: "7D" }, { name: "Nafeeza Talita Azzahra", class: "7D" },
+            { name: "Raisyauqi Aqila Insani", class: "7D" }, { name: "Rayasathria Maulana Putra", class: "7D" },
+            { name: "Reyvaldo El Susanto", class: "7D" }, { name: "Sakhya Dhirendra", class: "7D" },
+            { name: "Sapta Yoga Winata", class: "7D" }, { name: "Sultan Dzaky Alfaridzi Permadi", class: "7D" },
+            { name: "Thiara Putri Permadi", class: "7D" }, { name: "Abraham Putra Pratama", class: "7E" },
+            { name: "Adeeva Kireynahikari Afsheen Myeisha", class: "7E" }, { name: "Alifianissa Azzahra", class: "7E" },
+            { name: "Aysha Naeema Zhafira", class: "7E" }, { name: "Azkaylana Kheinzafahira", class: "7E" },
+            { name: "Azwar Alahnaf Faris", class: "7E" }, { name: "Bilqisa Aretha Azzaeka", class: "7E" },
+            { name: "Fairel Atharriz Khalif", class: "7E" }, { name: "Haydar Ali Arthiajati", class: "7E" },
+            { name: "Janeeta Ghaisani Arsha", class: "7E" }, { name: "Jasmine Aufaa Maharani", class: "7E" },
+            { name: "Kimberly Ashley Peters", class: "7E" }, { name: "Kirana Asha Nabila", class: "7E" },
+            { name: "Maharani Siti Fatimah Musthafa", class: "7E" }, { name: "Manon Adjisuryonegoro Prawirodirjo", class: "7E" },
+            { name: "Muhammad Arsyl Raspathi", class: "7E" }, { name: "Muhammad Rafka", class: "7E" },
+            { name: "Nadien Aliya Diva Putri Kusdiana", class: "7E" }, { name: "Naufal Afkar", class: "7E" },
+            { name: "Navakisha Shanaztasya Dibyo Kusumo", class: "7E" }, { name: "Raffa Aly Budiman", class: "7E" },
+            { name: "Ra'id Al Fawwaz", class: "7E" }, { name: "Raima Sidra Ghani", class: "7E" },
+            { name: "Raina Mahira Chandra", class: "7E" }, { name: "Sheza Sabreen Shalina", class: "7E" },
+            { name: "Syam Faiz Rizqina", class: "7E" }, { name: "Vina Fauziatul A'zizah", class: "7E" },
+            { name: "Zaffi Abdul Jabbaar", class: "7E" }, { name: "Zhian Yaasir Hafizh Al Anwar", class: "7E" },
+            { name: "Abdilah Fathul Ariqin", class: "7F" }, { name: "Adam Alif Arayana", class: "7F" },
+            { name: "Adelio Ozora Daryza", class: "7F" }, { name: "Adrio Fahrezi", class: "7F" },
+            { name: "Allegra Melody Camora", class: "7F" }, { name: "Alliya Najwa Muslihah", class: "7F" },
+            { name: "Ardhafi Afkariya Ma'ruf", class: "7F" }, { name: "Arya Sentana", class: "7F" },
+            { name: "Bintang Akhtar Maulana", class: "7F" }, { name: "Darel Nendra Sasmita", class: "7F" },
+            { name: "Dhia Alya Kirana Bella", class: "7F" }, { name: "Faisal Amrullah", class: "7F" },
+            { name: "Falisha Alanna Chandra", class: "7F" }, { name: "Kayla Ashilah Putrinadeli", class: "7F" },
+            { name: "Keyra Alisha Indrawan", class: "7F" }, { name: "Kirana Dwi Adhyaksa", class: "7F" },
+            { name: "Maharani Zaihan Fairuz", class: "7F" }, { name: "Meisha Angelica Prameswari", class: "7F" },
+            { name: "Muhamad Shafwan Assyabil", class: "7F" }, { name: "Muhammad Gilby Bilfaqih", class: "7F" },
+            { name: "Muhammad Raffi", class: "7F" }, { name: "Muhammad Rasyid Salman Kamil", class: "7F" },
+            { name: "Nafisa Affra Arraisha", class: "7F" }, { name: "Najwa Nur Aliya Hamidah", class: "7F" },
+            { name: "Nayyara Mecca", class: "7F" }, { name: "Rahardian Rasyid Nurwan", class: "7F" },
+            { name: "Raisha Halimah Aliyasari", class: "7F" }, { name: "Shafina Mellody Euphenia Hayuputri", class: "7F" },
+            { name: "Syafarani Dwi Permata", class: "7F" }, { name: "Yasmin Althea Trisya Hermawan", class: "7F" },
+            { name: "Afifah Nur Madinah", class: "7G" }, { name: "Afridzal Syahrial Arsy", class: "7G" },
+            { name: "Akbar Faiz Kamil", class: "7G" }, { name: "Akhtar Rasyid Athaya Arsi Putra", class: "7G" },
+            { name: "Al Jibrani Fathan Maulana Utama", class: "7G" }, { name: "Almaira Danish Darmawan", class: "7G" },
+            { name: "Alqiano Hazran Zaidan", class: "7G" }, { name: "Aniqa Yumna Raina", class: "7G" },
+            { name: "Athaya Fatinah Mumtaz", class: "7G" }, { name: "Avara Nur Hafizha Rudiansyah", class: "7G" },
+            { name: "Bradley Lamborgini Putra Elmar", class: "7G" }, { name: "Danish Mirza Putragian", class: "7G" },
+            { name: "Dy Jibran Zhafir", class: "7G" }, { name: "Dzikra Hana Fauziyah", class: "7G" },
+            { name: "El Fathaan Sugara", class: "7G" }, { name: "Ghassan Raykarivan Gibran", class: "7G" },
+            { name: "Hafudzha Alpinia Syuri", class: "7G" }, { name: "Kalea Sabiyanara", class: "7G" },
+            { name: "Keisha Violetta Arin", class: "7G" }, { name: "Kymiko Marcellina Prasetya", class: "7G" },
+            { name: "Maulidya Hasna Kamila", class: "7G" }, { name: "Nadhif Adika Hafizh", class: "7G" },
+            { name: "Naurah Rafiqa Zahra", class: "7G" }, { name: "Nazira Assyila Athaya", class: "7G" },
+            { name: "Rayyan Sukma Aqila", class: "7G" }, { name: "Riby Aqilatunnisa", class: "7G" },
+            { name: "Rizky Pradana Yusya Putra", class: "7G" }, { name: "Rubby Alfatih", class: "7G" },
+            { name: "Shaqueela Midry Faranisa", class: "7G" }, { name: "Zakiyyah Mufiidah", class: "7G" },
+            { name: "Adhila Assyafina Hadisaputro", class: "7H" }, { name: "Affan Nugraha", class: "7H" },
+            { name: "Ainun Al-Husna Dimanggis", class: "7H" }, { name: "Akiraka Kenji Adhyasta", class: "7H" },
+            { name: "Alaric Zahran Ihsan", class: "7H" }, { name: "Alexsha Putri Kamila", class: "7H" },
+            { name: "Alkhaz Hideki Nasir", class: "7H" }, { name: "Aqeela Fathiyyaturahman Pradeksa Putri", class: "7H" },
+            { name: "Arsya Akmaluz Budiman", class: "7H" }, { name: "Arsyan Al-Firmansyah", class: "7H" },
+            { name: "Bhakti Radhitia", class: "7H" }, { name: "Cyril Zayd Alvaro", class: "7H" },
+            { name: "Dede Khalil Dhillah", class: "7H" }, { name: "Eirene Rafilah Putri", class: "7H" },
+            { name: "Elmyra Anindita Putri", class: "7H" }, { name: "Faris Dirga Muazzam", class: "7H" },
+            { name: "Gentari Hibar Waluya", class: "7H" }, { name: "Harlan Haikal Rasyd", class: "7H" },
+            { name: "Hilmi Ichlasul Amal", class: "7H" }, { name: "Kalvin Al Kenkiko", class: "7H" },
+            { name: "Karenza Altha Sheyra Navita", class: "7H" }, { name: "Keyla Artania Sukarno", class: "7H" },
+            { name: "Mezzaluna Zafirah Supriadi", class: "7H" }, { name: "Nabila Ozora Alhadi", class: "7H" },
+            { name: "Naila Talita Azzahra", class: "7H" }, { name: "Nazhifa Assyabiya", class: "7H" },
+            { name: "Raisya Chelsea Aurora", class: "7H" }, { name: "Syakirah Nur Aqilah", class: "7H" },
+            { name: "Umar Imam Muslim", class: "7H" }, { name: "Zacke Ibrahim Adinata", class: "7H" },
+            { name: "Abdul Gany Adam Gunawan", class: "7I" }, { name: "Adelia Agustina", class: "7I" },
+            { name: "Agustian Dwi Handoko", class: "7I" }, { name: "Aisyahfika Irdina Rafa", class: "7I" },
+            { name: "Alaric Azzahidi Burhan", class: "7I" }, { name: "Aleandra Dirga Putra Erlangga", class: "7I" },
+            { name: "Alifiya Diandra Nafeeza", class: "7I" }, { name: "Arkharega Narayyan Al Khalifi", class: "7I" },
+            { name: "Boy Aldebaran Shahmata Ilham", class: "7I" }, { name: "Damara Roro Adhi Prameswari", class: "7I" },
+            { name: "Devandra Malik Anaqi", class: "7I" }, { name: "Fakhira Shakila Raisya Akbar", class: "7I" },
+            { name: "Fawaz Abbasy Ghaisan Raziq", class: "7I" }, { name: "Freya Malaikha Indrawan", class: "7I" },
+            { name: "Humaira Amorfati Pratama", class: "7I" }, { name: "Jibrael Muhammadi Prahadya", class: "7I" },
+            { name: "Jibril Nagasaku", class: "7I" }, { name: "Kalif Kautsar Rasyad", class: "7I" },
+            { name: "Keyra Aqeela Pasya", class: "7I" }, { name: "Khansa Khairunnisa Munawar", class: "7I" },
+            { name: "Laiqa Aeesha Kinara", class: "7I" }, { name: "Melvin Zedekiah Ragnar", class: "7I" },
+            { name: "Muhammad Dzaki Mubarok", class: "7I" }, { name: "Nabila Awaliya Nayla", class: "7I" },
+            { name: "Naqiya Mushakina Adisha Zanila", class: "7I" }, { name: "Nasya Putri Keane", class: "7I" },
+            { name: "Nayla Qaisara Azzahra", class: "7I" }, { name: "Nessa Felesia Ardeliawijaya", class: "7I" },
+            { name: "Reyna Aesha Gunav", class: "7I" }, { name: "Virendra Danest Alaric", class: "7I" },
+            { name: "Adni Rizqah Putri", class: "7J" }, { name: "Adzkahn Sevariyo Al Mochandy", class: "7J" },
+            { name: "Afrisya Kaisara Sutrisno", class: "7J" }, { name: "Akyla Nava Qiandra Sugianto", class: "7J" },
+            { name: "Al Bara Arkan Jayadiningrat", class: "7J" }, { name: "Arfa Al Rizki", class: "7J" },
+            { name: "Arkaan Rasendrya Sukma", class: "7J" }, { name: "Ashafa Zarra Putri Maolana", class: "7J" },
+            { name: "Dafi Abqori Kurnia Adnan", class: "7J" }, { name: "Dina Raditha Wijaya", class: "7J" },
+            { name: "Dzakky Rafiandra Harahap", class: "7J" }, { name: "Emiel Halim Nugraha", class: "7J" },
+            { name: "Givanzka Syailendra", class: "7J" }, { name: "Hadyastha Kaival Sinuhaji", class: "7J" },
+            { name: "Haifa Latif Ghendis Priyono", class: "7J" }, { name: "Jasmine Zulaika Sidik", class: "7J" },
+            { name: "Keenan Saputra Djatikoesumo", class: "7J" }, { name: "Keysha Annindya Harahap", class: "7J" },
+            { name: "Mirza Ghaisan Al Fawwaz", class: "7J" }, { name: "Muhammad Dzakii Albarra", class: "7J" },
+            { name: "Nadhif Afzaal Muhafiz", class: "7J" }, { name: "Nadya Aqilah Shahab", class: "7J" },
+            { name: "Raeesa Syakira Humayraa Kusumah", class: "7J" }, { name: "Raisa Dyandra Gumilar", class: "7J" },
+            { name: "Reggina Rahma Putri Nugraha", class: "7J" }, { name: "Risky Ramadhan", class: "7J" },
+            { name: "Shakila Faranissa Agnia Putri", class: "7J" }, { name: "Shazia Raqilla Putri Ramdhani", class: "7J" },
+            { name: "Calista Alika Zahra", class: "7J" }, { name: "Almer Al Risyad Bachri", class: "7J" },
+            { name: "Ahmad Zaidan Ibadurrahman", class: "7K" }, { name: "Akhtar Raffandra Alwikurnia Jayapraja", class: "7K" },
+            { name: "Alayka Zyanetta Amatillah", class: "7K" }, { name: "Alrania Rahanaya Mulia Miraza", class: "7K" },
+            { name: "Alva Darrel Faeyza", class: "7K" }, { name: "Alya Rohimatussyifa Putri Farhani", class: "7K" },
+            { name: "Avara Almira Aliyadevi", class: "7K" }, { name: "Bintang Athaya Erizal", class: "7K" },
+            { name: "Danish Rufayda Assyifa", class: "7K" }, { name: "Ibrahim Ozil Putra Alamsyah", class: "7K" },
+            { name: "Isnaini Laurenia Zulfa", class: "7K" }, { name: "Jeevan Aimar Khalfani", class: "7K" },
+            { name: "Kalea Mugni Marva", class: "7K" }, { name: "Kayna Shify Alika", class: "7K" },
+            { name: "Keira Azka Leandra", class: "7K" }, { name: "Keyla Nazila Azzahra", class: "7K" },
+            { name: "Khalisa Almaira Maharsi", class: "7K" }, { name: "Manik Andara Sidiq", class: "7K" },
+            { name: "Mirza Rahdi Asshafwan", class: "7K" }, { name: "Muhammad Althaf Faeyza", class: "7K" },
+            { name: "Muhammad Aryasatya Ginalih", class: "7K" }, { name: "Muhammad Haidar Khairiyrizqi Rahmadan", class: "7K" },
+            { name: "Muhammad Mikail Syabil Ramdhan", class: "7K" }, { name: "Muhammad Turhamun", class: "7K" },
+            { name: "Nakenzie Zaki Zaid", class: "7K" }, { name: "Renita Aulia Putri", class: "7K" },
+            { name: "Sandrea Early Adara Anaputri", class: "7K" }, { name: "Shaquila Queisha Rivani", class: "7K" },
+            { name: "Syifa Salsabila Saepudin", class: "7K" }, { name: "Sylvia Nur Chandra Kirana", class: "7K" },
+            { name: "devi saidulloh", class: "7L" }
+        ];
+
+        // --- QUESTIONS DATA ---
+        const questions = {
+            ipa: {
+                passage: "Wacana 1 – Museum Bank Indonesia: Di Museum Bank Indonesia, siswa melihat berbagai jenis uang logam dan uang kertas dari masa ke masa. Uang logam terasa lebih dingin saat disentuh dibandingkan uang kertas, meskipun berada di ruangan yang sama. Selain itu, uang kertas tidak mudah robek walaupun sering dilipat dan digunakan dalam jangka waktu lama.",
+                items: [
+                    "Mengapa uang logam terasa lebih dingin daripada uang kertas saat disentuh? Jelaskan berdasarkan sifat hantar panas (konduktivitas) bahannya!",
+                    "Berikan satu contoh peristiwa serupa di rumah di mana dua benda berada di ruangan yang sama tetapi terasa memiliki suhu berbeda saat disentuh. Jelaskan mengapa hal itu terjadi!",
+                    "Uang kertas BI terbuat dari serat kapas, bukan kertas biasa. Mengapa pemilihan bahan serat kapas ini sangat penting jika ditinjau dari sifat mekanik bahan (kekuatan dan elastisitas)?"
+                ]
+            },
+            ips: {
+                items: [
+                    "Bagaimana nasib uang yang sudah tidak layak edar?",
+                    "Jelaskan proses pembuatan uang! (Perencanaan, pembuatan dan bahan)",
+                    "Di ruang pra BI, kalian akan menemukan replika dayung dari kapal Jung Java. Apa yang kalian ketahui tentang Jung Java?",
+                    "Apa yang dimaksud dengan kebijakan menggunting uang?",
+                    "Tuliskan tokoh tokoh Indonesia yang ada dalam uang Indonesia!",
+                    "Apa yang menyebabkan uang pada jaman kolonial bergambar wayang diterbitkan?",
+                    "Di DJB dipasang kaca patri dengan gambar dewa herme. Tuliskan alasan gambar dewa herme yang dipasang di kaca patri tersebut!",
+                    "Bagaimana cara pemerintah Hindia Belanda melawan peredaran uang palsu?",
+                    "Tuliskan 4 alat musik yang pernah ada dalam mata uang Indonesia",
+                    "Bagaimana cara menjaga uang rupiah dengan 5 J?"
+                ]
+            },
+            pai: {
+                items: [
+                    "Jelaskan pengertian sholat jamak dan sholat qashar menurut fikih Islam!",
+                    "Apa perbedaan sholat jamak taqdim dan sholat jamak ta’khir?",
+                    "Perhatikan pernyataan berikut: “Sholat Subuh dan Magrib dapat diqashar ketika seseorang sedang safar.” Menurutmu, apakah pernyataan tersebut benar atau salah? Berikan alasan yang jelas berdasarkan ketentuan sholat qashar!"
+                ]
+            }
+        };
+
+        // --- STATE & UI LOGIC ---
+        let currentStudent = null;
+        let currentSubject = null;
+        let studentData = {};
+        let saveTimeout = null;
+
+        const studentSelect = document.getElementById('student-select');
+        const btnStart = document.getElementById('btn-start');
+        const saveIndicator = document.getElementById('save-indicator');
+
+        // Init Choices.js
+        const choices = new Choices(studentSelect, {
+            searchEnabled: true,
+            itemSelectText: '',
+            placeholderValue: 'Cari namamu...',
+        });
+
+        // Add students to select
+        students.forEach((s, i) => {
+            choices.setChoices([{ value: i.toString(), label: `${s.name} (${s.class})` }], 'value', 'label', false);
+        });
+
+        studentSelect.addEventListener('change', () => {
+            btnStart.disabled = !studentSelect.value;
+        });
+
+        btnStart.onclick = async () => {
+            const idx = studentSelect.value;
+            currentStudent = students[idx];
+            document.getElementById('display-name').textContent = currentStudent.name;
+            document.getElementById('display-class').textContent = `KELAS ${currentStudent.class}`;
+            
+            await loadData();
+            document.getElementById('step-login').classList.add('hidden');
+            document.getElementById('step-dashboard').classList.remove('hidden');
+            updateBadges();
+            lucide.createIcons();
+        };
+
+        async function loadData() {
+            const docId = `${currentStudent.name} - ${currentStudent.class}`;
+            const snap = await getDoc(doc(db, "submissions", docId));
+            studentData = snap.exists() ? snap.data() : { 
+                student_info: currentStudent,
+                answers_ipa: {}, answers_ips: {}, answers_pai: {} 
+            };
+        }
+
+        window.openSubject = (subject) => {
+            currentSubject = subject;
+            document.getElementById('subject-title').textContent = subject;
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            const data = questions[subject];
+            if (data.passage) {
+                const p = document.createElement('div');
+                p.className = 'bg-indigo-50/50 p-8 rounded-[2rem] border border-indigo-100/50 text-slate-700 leading-relaxed text-sm italic mb-10 relative overflow-hidden';
+                p.innerHTML = `<div class="absolute top-0 left-0 w-1 h-full bg-indigo-400"></div>${data.passage}`;
+                container.appendChild(p);
+            }
+
+            data.items.forEach((q, i) => {
+                const qId = `q${i+1}`;
+                const val = studentData[`answers_${subject}`]?.[qId] || '';
+                
+                let imageHtml = '';
+                if (subject === 'ips' && i === 6) {
+                    imageHtml = `<img src="DSC07251.jpg" alt="Dewa Herme" class="w-full h-auto rounded-3xl mb-6 shadow-lg border border-white">`;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'space-y-4';
+                div.innerHTML = `
+                    <div class="flex items-baseline gap-3">
+                        <span class="text-xs font-black text-slate-300 uppercase tracking-tighter">Soal ${i+1}</span>
+                        <div class="h-[1px] flex-1 bg-slate-100"></div>
+                    </div>
+                    ${imageHtml}
+                    <p class="text-lg font-bold text-slate-800 leading-tight tracking-tight">${q}</p>
+                    <textarea 
+                        oninput="handleInput('${qId}', this.value)"
+                        class="w-full p-6 bg-white border-2 border-slate-100 rounded-[1.5rem] focus:border-museum-accent focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none min-h-[160px] font-semibold text-slate-700 shadow-sm"
+                        placeholder="Ketik jawabanmu di sini..."
+                    >${val}</textarea>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('step-dashboard').classList.add('hidden');
+            document.getElementById('step-form').classList.remove('hidden');
+            lucide.createIcons();
+            window.scrollTo(0, 0);
+        };
+
+        window.backToDashboard = () => {
+            document.getElementById('step-form').classList.add('hidden');
+            document.getElementById('step-dashboard').classList.remove('hidden');
+            updateBadges();
+            lucide.createIcons();
+        };
+
+        window.handleInput = (qId, value) => {
+            if (!studentData[`answers_${currentSubject}`]) studentData[`answers_${currentSubject}`] = {};
+            studentData[`answers_${currentSubject}`][qId] = value;
+            
+            saveIndicator.style.opacity = '1';
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(save, 1500);
+        };
+
+        async function save() {
+            const docId = `${currentStudent.name} - ${currentStudent.class}`;
+            await setDoc(doc(db, "submissions", docId), {
+                ...studentData,
+                metadata: { last_updated: new Date().toISOString() }
+            }, { merge: true });
+            
+            setTimeout(() => { saveIndicator.style.opacity = '0'; }, 1000);
+        }
+
+        function updateBadges() {
+            ['ipa', 'ips', 'pai'].forEach(sub => {
+                const ans = studentData[`answers_${sub}`] || {};
+                const totalQuestions = questions[sub].items.length;
+                const answeredCount = Object.values(ans).filter(v => v && v.trim() !== '').length;
+                
+                const badge = document.getElementById(`badge-${sub}`);
+                const statusText = document.getElementById(`status-${sub}`);
+                
+                if (answeredCount === 0) {
+                    statusText.textContent = "Belum dikerjakan";
+                    statusText.className = "text-[10px] font-bold text-slate-400 uppercase tracking-wider";
+                    badge.classList.add('hidden');
+                } else if (answeredCount < totalQuestions) {
+                    statusText.textContent = `Progres: ${answeredCount}/${totalQuestions} Soal`;
+                    statusText.className = "text-[10px] font-bold text-amber-500 uppercase tracking-wider";
+                    badge.classList.add('hidden');
+                } else {
+                    statusText.textContent = "Selesai & Lengkap";
+                    statusText.className = "text-[10px] font-bold text-emerald-500 uppercase tracking-wider";
+                    badge.classList.remove('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
