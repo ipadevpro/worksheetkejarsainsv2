@@ -57,17 +57,49 @@
         }
 
         /* Choices.js Customization */
+        .choices {
+            margin-bottom: 0;
+            overflow: visible;
+            z-index: 40;
+        }
         .choices__inner {
             background-color: white !important;
-            border-radius: 12px !important;
-            border: 2px solid #e2e8f0 !important;
-            min-height: 56px !important;
-            padding: 8px 16px !important;
-            font-weight: 600 !important;
+            border-radius: 16px !important;
+            border: 2px solid #f1f5f9 !important;
+            min-height: 64px !important;
+            padding: 12px 20px !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            transition: all 0.2s ease;
+            display: flex !important;
+            align-items: center !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .choices.is-focused .choices__inner {
+            border-color: #4f46e5 !important;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
         .choices__list--dropdown {
-            border-radius: 12px !important;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+            border-radius: 20px !important;
+            border: 2px solid #f1f5f9 !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+            margin-top: 8px !important;
+            overflow: hidden !important;
+            z-index: 100 !important;
+        }
+        .choices__list--dropdown .choices__item--selectable {
+            padding: 14px 20px !important;
+            font-size: 15px !important;
+            font-weight: 600 !important;
+        }
+        .choices__list--dropdown .choices__item--selectable.is-highlighted {
+            background-color: #f8fafc !important;
+            color: #4f46e5 !important;
+        }
+        
+        /* Fix for dropdown being cut off */
+        #step-login {
+            padding-bottom: 100px; /* Give space for dropdown */
         }
         
         /* Entrance Animations */
@@ -87,7 +119,7 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-900 min-h-screen">
 
-    <nav class="sticky top-0 z-50 glass-card px-6 py-4 flex items-center justify-between border-b border-slate-200/50">
+    <nav class="sticky top-0 z-[100] glass-card px-6 py-4 flex items-center justify-between border-b border-slate-200/50">
         <div class="flex items-center gap-3 text-left">
             <img src="logo.png" alt="Logo" class="h-8 w-auto rounded-lg">
             <div>
@@ -117,11 +149,9 @@
                 <select id="student-select" class="w-full">
                     <option value="">Cari nama lengkap...</option>
                 </select>
-                <button id="btn-start" class="w-full h-14 bg-museum-dark text-white rounded-2xl font-bold shadow-2xl shadow-slate-300 transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center gap-2" disabled>
+                <button id="btn-start" class="w-full h-16 bg-museum-dark text-white rounded-2xl font-bold shadow-2xl shadow-slate-300 transition-all active:scale-95 disabled:opacity-30 flex items-center justify-center gap-3 text-lg" disabled>
                     Mulai Eksplorasi
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </button>
             </div>
             
@@ -458,6 +488,12 @@
             searchEnabled: true,
             itemSelectText: '',
             placeholderValue: 'Cari namamu...',
+            searchPlaceholderValue: 'Ketik nama di sini...',
+            shouldSort: false,
+            position: 'bottom', // Force dropdown to open downwards
+            searchResultLimit: 10,
+            renderChoiceLimit: 10,
+            noResultsText: 'Nama tidak ditemukan',
         });
 
         // Add students to select
@@ -588,6 +624,9 @@
                 }
             });
         }
+
+        // Initial icon render
+        lucide.createIcons();
     </script>
 </body>
 </html>
